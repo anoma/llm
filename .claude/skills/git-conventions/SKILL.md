@@ -1,6 +1,6 @@
 ---
 name: git-conventions
-description: Git branching, topic management, and bug fix workflow conventions for Anoma.
+description: Git branching, topic management, and bug fix workflow conventions.
 ---
 
 # Git Conventions
@@ -16,7 +16,7 @@ description: Git branching, topic management, and bug fix workflow conventions f
 
 ## Naming
 
-Name topics `name/description` (e.g., `mariari/fix-ordering-unchecked-mnesia`).
+Name topics `name/description` (e.g., `alice/fix-ordering-bug`).
 
 ## Core Principles
 

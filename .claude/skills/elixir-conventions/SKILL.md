@@ -15,11 +15,12 @@ description: Elixir-specific coding patterns and conventions.
 ## Types & Structs
 
 - Use `typedstruct` for struct definitions.
-- Startup arguments use a `startup_options` union type:
+- Express startup/init arguments as a union of tagged tuples so
+  callers can pass options in any order:
   ```elixir
   @type startup_options ::
-          {:node_id, String.t()}
-          | {:id, atom()}
+          {:name, atom()}
+          | {:timeout, pos_integer()}
 
   @spec start_link(list(startup_options())) :: GenServer.on_start()
   ```
@@ -31,18 +32,19 @@ description: Elixir-specific coding patterns and conventions.
 - `handle_call` body: `{:reply, do_foo(...), state}` — core logic
   in the `do_` function.
 - Never call a callback from another callback.
-- Actor modules require three sections:
+- Organize GenServer modules into clear sections (public API,
+  callbacks, private helpers) using banner comments:
   ```elixir
   ############################################################
-  #                      Public RPC API                      #
+  #                      Public API                          #
   ############################################################
 
   ############################################################
-  #                    GenServer Behavior                    #
+  #                    GenServer Callbacks                   #
   ############################################################
 
   ############################################################
-  #                  GenServer Implementation                #
+  #                    Private Helpers                       #
   ############################################################
   ```
 
@@ -55,19 +57,17 @@ description: Elixir-specific coding patterns and conventions.
 
 ## Examples
 
-- Live in `lib/examples/e_<module>.ex`.
-- Module name pattern: `E<Module>` (e.g., `ENode`, `EShard`).
-- Use `import ExUnit.Assertions` for `assert`.
+- Keep runnable examples alongside production code (not just in
+  `test/`). A common pattern is a dedicated examples directory.
+- Use `import ExUnit.Assertions` for `assert` in examples.
 
 ## Interactive Testing
 
 - Run one-off expressions: `timeout 60 mix run -e 'code'`
   (never use `--no-halt`, it hangs the VM).
 - Inspect process state: `:sys.get_state(pid)`
-- Query Mnesia:
-  ```elixir
-  :mnesia.transaction(fn -> :mnesia.match_object({table, :_, :_}) end)
-  ```
+- Query persistent stores (ETS, Mnesia, databases) to verify data
+  is actually written and read.
 
 ## Formatting
 
