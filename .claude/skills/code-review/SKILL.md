@@ -1,5 +1,5 @@
 ---
-name: review
+name: code-review
 description: Review code for architectural fit, dead code, and complexity. Use when asked to review a module, file, or PR.
 ---
 
