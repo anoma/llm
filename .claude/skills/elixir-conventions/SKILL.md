@@ -7,10 +7,15 @@ description: Elixir-specific coding patterns and conventions.
 
 ## Control Flow
 
-- Prefer `with` chains over nested `case`.
-- Use `Enum.reduce_while` or `Enum.flat_map` over `Enum.reduce`
-  with internal conditionals.
 - Pattern match in function heads rather than branching in the body.
+- Prefer `with` chains over nested `case`.
+- Keep iteration flat: `Enum.flat_map`, `Enum.filter`, or split
+  into sequential steps (gather then process). Never nest
+  `Enum.reduce_while` or `Enum.reduce` — if you need two levels,
+  decompose into a flat_map + single reduce, or use recursion.
+- `Enum.reduce_while` is fine for a single-level early-exit loop,
+  but reach for simpler constructs first (`flat_map`, `Enum.find`,
+  `Enum.any?`, multi-clause recursion).
 
 ## Types & Structs
 
