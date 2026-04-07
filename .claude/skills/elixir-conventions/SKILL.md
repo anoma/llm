@@ -7,10 +7,28 @@ description: Elixir-specific coding patterns and conventions.
 
 ## Control Flow
 
-- Prefer `with` chains over nested `case`.
-- Use `Enum.reduce_while` or `Enum.flat_map` over `Enum.reduce`
-  with internal conditionals.
 - Pattern match in function heads rather than branching in the body.
+- Prefer `with` chains over nested `case`.
+- Keep iteration flat: `Enum.flat_map`, `Enum.filter`, or split
+  into sequential steps (gather then process). Never nest
+  `Enum.reduce_while` or `Enum.reduce` — if you need two levels,
+  decompose into a flat_map + single reduce, or use recursion.
+- `Enum.reduce_while` is fine for a single-level early-exit loop,
+  but reach for simpler constructs first (`flat_map`, `Enum.find`,
+  `Enum.any?`, multi-clause recursion).
+- **Map-then-combine over stateful reduce** (Guy Steele pattern):
+  instead of threading an accumulator through `Enum.reduce`, map
+  each element into monoid space then combine with a monoidal op:
+  ```elixir
+  # Instead of:
+  Enum.reduce(items, %{}, fn {k, v}, acc -> Map.put(acc, k, v) end)
+  # Prefer:
+  Map.new(items, fn {k, v} -> {k, v} end)
+  # Or when Map.new doesn't fit:
+  items |> Enum.map(&to_map/1) |> Enum.reduce(%{}, &Map.merge/2)
+  ```
+  Common monoids: `Map.merge/2`, `MapSet.union/2`, `++`, `+`.
+  Shorthand: `Map.new/2`, `MapSet.new/2`, `Enum.flat_map/2`.
 
 ## Types & Structs
 
